@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "weibo-chaohua-sign"
+version = "0.1.0"
+description = "微博超话签到"
+authors = ["jose <joseandluue@outlook.com>"]
+license = "Apache License 2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+nb-cli = "^1.4.1"
+nonebot-plugin-send-anything-anywhere = "^0.6.1"
+nonebot-plugin-apscheduler = "^0.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
