@@ -1,27 +1,19 @@
 import random
 import re
-import json
-import copy
-from datetime import date
 from urllib.parse import unquote
 import httpx
-from nonebot import on_command, require
-from nonebot.internal.matcher import Matcher
-from nonebot.typing import T_State
-from nonebot.internal.params import ArgStr
 from loguru import logger
-from nonebot_plugin_saa import Text, TargetQQPrivate, enable_auto_select_bot
 
-require("nonebot_plugin_apscheduler")
-from nonebot_plugin_apscheduler import scheduler
+from .config import Tool
 
-class WeiboCode:
+class WeiboCdk:
     def __init__(self, user_data: dict):
-        self.params = tool.cookie_to_dict(user_data['params'].replace('&', ';')) if user_data['params'] else None
+        self.params = Tool.cookie_to_dict(user_data['params'].replace('&', ';')) if user_data['params'] else None
         """params: s=xxxxxx; gsid=xxxxxx; aid=xxxxxx; from=xxxxxx"""
-        self.cookie = tool.cookie_to_dict(user_data['cookie'])
+        self.cookie = Tool.cookie_to_dict(user_data['cookie'])
         self.container_id = {'原神': '100808fc439dedbb06ca5fd858848e521b8716',
-                             '崩铁': '100808e1f868bf9980f09ab6908787d7eaf0f0'}
+                             '崩铁': '100808e1f868bf9980f09ab6908787d7eaf0f0',
+                             '绝区零': '100808f303ad099b7730ad1f96ff49726d3ff3'}
         self.ua = 'WeiboOverseas/4.4.6 (iPhone; iOS 14.0.1; Scale/2.00)'
         self.headers = {'User-Agent': self.ua}
         self.follow_data_url = 'https://api.weibo.cn/2/cardlist'
@@ -38,7 +30,7 @@ class WeiboCode:
             async with httpx.AsyncClient() as client:
                 response = await client.get(url)
             responses = response.json()
-            group = tool.nested_lookup(responses, 'group', fetch_first=True)
+            group = Tool.nested_lookup(responses, 'group', fetch_first=True)
             if group:
                 ticket_id[key] = {}
                 ticket_id[key]['id'] = [i
@@ -74,18 +66,19 @@ class WeiboCode:
         else:
             return '获取失败，请重新设置wb_cookie'
 
-    async def get_code_list(self):
-        ticket_id = await self.get_ticket_id  # 有活动则返回一个dict，没活动则返回一个str
-        '''
+    async def get_code_list(self, ticket_id):
+        # ticket_id = await self.get_ticket_id  # 有活动则返回一个dict，没活动则返回一个str
+        """
         ticket_id = {
             '原神/崩铁': {
                 'id': [],
                 'img': ''
             }
         }
-        '''
+        """
         if isinstance(ticket_id, dict):
             msg = ""
+            img = None
             code = {key: [] for key in ticket_id.keys()}
             for key, value in ticket_id.items():
                 for k, v in value.items():
@@ -101,7 +94,7 @@ class WeiboCode:
                        "\n2️⃣" \
                        f"  \n{values[1]}" \
                        "\n3️⃣" \
-                       f"  \n{values[2]}"
+                       f"  \n{values[2]}\n"
             return msg, img
         else:
             return ticket_id
