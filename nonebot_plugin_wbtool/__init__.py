@@ -26,8 +26,8 @@ __plugin_meta__ = PluginMetadata(
     type="application",
     supported_adapters={"~onebot.v11", "~qq"},
     usage=
-    f"wb签到 -- 手动超话签到"
-    f"wbcdk -- 发送已领取的CDK给用户"
+    f"wb签到 -- 手动超话签到\n"
+    f"wbcdk -- 发送已领取的CDK给用户\n"
     f"wbset -- 设置超话签到/领取CDK的账户参数",
 )
 
@@ -118,6 +118,19 @@ async def send_qqGroup(bot, event, msgs_list):
     messages = [build_forward_msg(msg) for msg in msgs_list]
     await bot.call_api("send_group_msg", group_id=event.group_id, message={"type": "at","data": {"qq": str(event.user_id)}})
     await bot.call_api("send_group_forward_msg", group_id=event.group_id, messages=messages)
+
+
+manually_weibo_help = on_command('wbhelp', priority=5, block=True)
+
+@manually_weibo_help.handle()
+async def setting(event, matcher: Matcher):
+    await manually_weibo_help.finish(
+                f"{PLUGIN.metadata.name}\n" 
+                f"{PLUGIN.metadata.description}\n"
+                "具体用法：\n"
+                f"{PLUGIN.metadata.usage}\n"
+            )
+
 
 @scheduler.scheduled_job("cron",
                          hour='7',
