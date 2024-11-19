@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "weibo-chaohua-sign"
+name = "nonebot-plugin-wbtool"
 version = "0.1.0"
 description = "微博超话签到"
-authors = ["jose <joseandluue@outlook.com>"]
+authors = ["dontdot <55482264+dontdot@users.noreply.github.com>"]
 license = "Apache License 2.0"
 readme = "README.md"
 
