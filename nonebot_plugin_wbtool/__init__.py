@@ -27,7 +27,7 @@ __plugin_meta__ = PluginMetadata(
     supported_adapters={"~onebot.v11", "~qq"},
     usage=
     f"wb签到 -- 手动超话签到\n"
-    f"wbcdk -- 发送已领取的CDK给用户\n"
+    # f"wbcdk -- 发送已领取的CDK给用户\n"
     f"wbset -- 设置超话签到/领取CDK的账户参数",
 )
 
@@ -38,7 +38,9 @@ manually_weibo_sign_check = on_command('wb签到', priority=5, block=True)
 async def weibo_sign(event: Union[GeneralMessageEvent], matcher: Matcher):
     user_id = event.get_user_id()
     user = Config.plugin_data.users.get(user_id)
-    await weibo_checkin_check(user=user, user_ids=[user_id], matcher=matcher)
+    if not user:
+        await manually_weibo_sign_check.finish('请通过 /wbset 设置签到及领取CDK参数')
+    await weibo_cdk_check(user=user, user_ids=[user_id], matcher=matcher)
 
 
 async def weibo_checkin_check(user: UserData, user_ids: Iterable[str], matcher: Matcher = None):

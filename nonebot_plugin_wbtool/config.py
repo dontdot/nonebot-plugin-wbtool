@@ -231,7 +231,7 @@ async def get_file(url: str, retry: bool = True, max_retries: int = 3, retry_int
                 return res.content
         except Exception as e:
             attempt += 1
-            logger.exception(f"nonebot-下载文件 - {url} 失败:{e}")
+            logger.exception(f"下载文件 - {url} 失败:{e}")  # PLUGIN.name
             if attempt < (max_retries if retry else 1):
                 await asyncio.sleep(retry_interval)
     return None
