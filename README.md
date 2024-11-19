@@ -1,9 +1,11 @@
-# nonebot-plugin-weibosign
+# nonebot-plugin-wbtool
 基于Nonebot2的微博超话签到
-## 指令
-· `/微博签到`
 
-· `/微博设置`
+·更新：从[mystool@Ljzd-PRO](https://github.com/Ljzd-PRO/nonebot-plugin-mystool) 项目分离出来合并
+## 指令
+· `/wb签到`
+
+· `/wbset`
 
 · 每日定时启动 (7:30)
 
@@ -11,3 +13,5 @@
 [genshinhelper2](https://github.com/y1ndan/genshinhelper2)
 
 [weibo](https://github.com/arcturus-script/weibo)
+
+[mystool](https://github.com/Ljzd-PRO/nonebot-plugin-mystool)
