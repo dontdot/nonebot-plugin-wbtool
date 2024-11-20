@@ -1,7 +1,7 @@
 # nonebot-plugin-wbtool
-基于Nonebot2的微博超话签到
+Nonebot2的微博超话签到
 
-·更新：从[mystool@Ljzd-PRO](https://github.com/Ljzd-PRO/nonebot-plugin-mystool) 项目分离出来合并
+·更新：基于[mystool@Ljzd-PRO](https://github.com/Ljzd-PRO/nonebot-plugin-mystool) 项目分离出来合并
 ## 指令
 · `/wb签到`
 
