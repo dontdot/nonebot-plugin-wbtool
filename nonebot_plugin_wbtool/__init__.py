@@ -65,7 +65,6 @@ async def weibo_checkin_check(user: UserData, user_ids: Iterable[str], matcher: 
 async def weibo_cdk_check(user: UserData, user_ids: Iterable[str], mode=0, matcher: Matcher = None):
     """
     是否开启微博兑换码功能的函数，并发送给用户任务执行消息。
-
     :param user: 用户对象
     :param user_ids: 发送通知的所有用户ID
     :param matcher: nonebot ``Matcher``

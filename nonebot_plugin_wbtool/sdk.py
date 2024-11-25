@@ -11,32 +11,40 @@ class WeiboCdk:
         self.params = Tool.cookie_to_dict(user_data['params'].replace('&', ';')) if user_data['params'] else None
         """params: s=xxxxxx; gsid=xxxxxx; aid=xxxxxx; from=xxxxxx"""
         self.cookie = Tool.cookie_to_dict(user_data['cookie'])
-        self.container_id = {'原神': '100808fc439dedbb06ca5fd858848e521b8716',
-                             '崩铁': '100808e1f868bf9980f09ab6908787d7eaf0f0',
-                             '绝区零': '100808f303ad099b7730ad1f96ff49726d3ff3'}
+        # self.container_id = {'原神': '100808fc439dedbb06ca5fd858848e521b8716',
+        #                      '崩铁': '100808e1f868bf9980f09ab6908787d7eaf0f0',
+        #                      '绝区零': '100808f303ad099b7730ad1f96ff49726d3ff3'}
+        self.itemid = {
+            '原神':'232476fc439dedbb06ca5fd858848e521b8716__wishenable__sgtotal_enable__0__0__0__wish_card_new_style__book_reservation__welcome_new_style_-_page_infeed_mix_activity',
+            '崩铁':'232476e1f868bf9980f09ab6908787d7eaf0f0__wishenable__sgtotal_enable__0__0__0__emceemoduleenable__wish_card_new_style__book_reservation__welcome_new_style_-_page_infeed_mix_activity',
+            '绝区零':'232476f303ad099b7730ad1f96ff49726d3ff3__wishenable__sgtotal_enable__0__0__0__wish_card_new_style__book_reservation__welcome_new_style_-_page_infeed_mix_activity'
+        }
         self.ua = 'WeiboOverseas/4.4.6 (iPhone; iOS 14.0.1; Scale/2.00)'
         self.headers = {'User-Agent': self.ua}
         self.follow_data_url = 'https://api.weibo.cn/2/cardlist'
         self.sign_url = 'https://api.weibo.cn/2/page/button'
-        self.event_url = 'https://m.weibo.cn/api/container/getIndex?containerid={container_id}_-_activity_list'
+        self.event_url_old = 'https://m.weibo.cn/api/container/getIndex?containerid={container_id}_-_activity_list'
+        self.event_url_new = 'https://api.weibo.cn/2/container/asyn'
         self.draw_url = 'https://games.weibo.cn/prize/aj/lottery'
 
     @property
     async def get_ticket_id(self):
         logger.info('开始获取微博兑换码ticket_id')
         ticket_id = {}
-        for key, value in self.container_id.items():
-            url = self.event_url.replace('{container_id}', value)
+        for key, value in self.itemid.items():
+            # url = self.event_url.replace('{container_id}', value)
+            params = self.params#['itemid'] = value
+            params['itemid'] = value
             async with httpx.AsyncClient() as client:
-                response = await client.get(url)
+                response = await client.get(self.event_url_new, params=params)
             responses = response.json()
-            group = Tool.nested_lookup(responses, 'group', fetch_first=True)
+            group = Tool.nested_lookup(responses, 'gift', fetch_first=True)
             if group:
                 ticket_id[key] = {}
                 ticket_id[key]['id'] = [i
                                         for id in group
                                         for i in re.findall(r'ticket_id=(\d*)', unquote(unquote(id['scheme'])))]
-                ticket_id[key]['img'] = group[random.randint(0, len(group) - 1)]['pic']
+                ticket_id[key]['img'] = group[random.randint(0, len(group) - 1)]['icon']
             else:
                 logger.info(f'{key}超话当前没有兑换码')
         if not ticket_id:
@@ -90,11 +98,13 @@ class WeiboCdk:
             for key, values in code.items():
                 msg += f"<{key}>超话兑换码：" \
                        "\n1️⃣" \
-                       f"  \n{values[0]}" \
-                       "\n2️⃣" \
-                       f"  \n{values[1]}" \
-                       "\n3️⃣" \
-                       f"  \n{values[2]}\n"
+                       f"  \n{values[0]}"
+                if len(values) > 1 and values[1]:
+                    msg += f"\n2️⃣" \
+                           f"  \n{values[1]}"
+                if len(values) > 2 and values[2]:
+                    msg += f"\n3️⃣" \
+                           f"  \n{values[2]}\n"
             return msg, img
         else:
             return ticket_id
